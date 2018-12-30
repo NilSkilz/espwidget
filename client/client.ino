@@ -20,7 +20,9 @@ void setup(void)
   Serial.begin(38400);
   tft.begin();
 
-  tft.setRotation(0);
+  tft.invertDisplay(true);
+
+ // tft.setRotation(0);
   tft.fillScreen(TFT_BLACK);
 
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
@@ -28,7 +30,7 @@ void setup(void)
   tft.setTextDatum(TL_DATUM);
   tft.drawString("Connecting...", 0, 0, 1);
   Serial.println("Connecting...");
-  
+
   WiFi.setAutoConnect(true);
   WiFi.setAutoReconnect(true);
   WiFi.begin(WIFI_SSID, WIFI_PASS);
@@ -49,7 +51,7 @@ void loop() {
     tft.fillRect(220, 220, 20, 20, 0);
     tft.fillCircle(230, 230, abs(8 - ((f >> 4) & 0xF)), 0x0DD5);
   }
-  
+
   int newWifiState = WiFi.status();
   if (lastWifiState != newWifiState) {
     lastWifiState = newWifiState;
@@ -63,7 +65,7 @@ void loop() {
   if (now - lastLoad > 90000 || lastLoad == 0) {
     if (newWifiState == WL_CONNECTED) {
       lastLoad = now;
-    
+
       tft.fillScreen(TFT_BLACK);
       tft.drawString("Loading...", 0, 0, 1);
       Serial.println("loading...");
@@ -71,7 +73,7 @@ void loop() {
       http.setTimeout(10000);
       http.begin(ENDPOINT);
       int status_code = http.GET();
-  
+
       if (status_code == HTTP_CODE_OK) {
         Serial.println("Got OK");
         WiFiClient& stream = http.getStream();
@@ -86,11 +88,11 @@ void loop() {
             }
             yield;
           }
-  
+
           tft.setWindow(0, r, WIDTH-1, r + ROW_READ - 1);
           tft.pushColors(buf, sizeof(buf));
           yield;
-          
+
           i = 0;
           r += ROW_READ;
         }
