@@ -53,9 +53,28 @@ RES -> D4
 DC -> D3
 BLK -> not connected
 
+## TFT_eSPI library setup
+There are a few configurable options as part of the TFT_eSPI Library.
+First you'll need to make sure the library is downloaded via the Arduino IDE. Go to Sketch -> Include Library -> Manage Libraries and search for the TFT_eSPI library.
+
+Once this is installed you'll need the User_Setup.h file on your system. On a Mac its Documents/Arduino/libraries/TFT_eSPI/User_Setup.h
+
+Copy the example file in the client directory and overwrite the existing file.
+
 ## Client setup
-- (TODO: TFT_eSPI library setup)
-- (TODO: document pin connections)
 - Copy config.h.example to config.h
 - Edit config.h to contain your Wifi credentials and the hostname of the server
 - Install!
+
+## Home Assistant / Node-Red Setup
+You'll be creating a really simple API in Node-Red. Copy the following code into a node-red flow.
+
+```
+[{"id":"2ba4e9bf.89785e","type":"http response","z":"a0e121ce.05c078","name":"","statusCode":"200","headers":{},"x":720,"y":400,"wires":[]},{"id":"b850811c.b08728","type":"api-current-state","z":"a0e121ce.05c078","name":"Get Value","server":"b33b6b5c.d07378","halt_if":"","halt_if_type":"","halt_if_compare":"is","override_topic":true,"override_payload":true,"override_data":true,"entity_id":"","state_type":"str","outputs":1,"x":560,"y":400,"wires":[["2ba4e9bf.89785e"]]},{"id":"3b8513fe.fffb9c","type":"function","z":"a0e121ce.05c078","name":"Get entity_id","func":"msg.payload = {\n    entity_id: msg.req.params.entity_id\n}\nreturn msg;","outputs":1,"noerr":0,"x":410,"y":400,"wires":[["b850811c.b08728"]]},{"id":"81d6cdf2.c4d7b","type":"http in","z":"a0e121ce.05c078","name":"","url":"/homeassistant/:entity_id","method":"get","upload":false,"swaggerDoc":"","x":180,"y":400,"wires":[["3b8513fe.fffb9c"]]},{"id":"b33b6b5c.d07378","type":"server","z":"","name":"Home Assistant","legacy":false,"hassio":true,"rejectUnauthorizedCerts":true,"ha_boolean":"y|yes|true|on|home|open"}]
+```
+
+The URL for the node service will now take 3 parameters in the query string, so should look like the following:
+`http://[ip-address]:3000/homeassistant?entity_id=[ENTITY_ID]&target=[20]&rgb565=1`
+
+- The target is optional and can be used to adjust the "Good" target for temperature devices.
+- The rgb565 parameter tells the service whether to render it for the device. Remove this to render in a browser.
