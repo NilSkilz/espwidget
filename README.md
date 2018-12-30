@@ -45,13 +45,13 @@ node index.js
 ```
 
 ## PIN Layout
-GND -> GND
-VCC -> 5v or 3.3v
-SCL -> D5
-SDA -> D7
-RES -> D4
-DC -> D3
-BLK -> not connected
+- GND -> GND
+- VCC -> 5v or 3.3v
+- SCL -> D5
+- SDA -> D7
+- RES -> D4
+- DC -> D3
+- BLK -> not connected
 
 ## TFT_eSPI library setup
 There are a few configurable options as part of the TFT_eSPI Library.
